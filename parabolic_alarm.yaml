@@ -1,0 +1,189 @@
+blueprint:
+  name: Parabolic Alarm Automation
+  description: Turn a light on based on detected motion
+  domain: automation
+  input:
+    alarm_start_time:
+      name: Start Time
+      description: Datetime helper for alarm to start. Use time only and Workday sensor to determine what days to run.
+      selector:
+        entity:
+          filter:
+            - domain: input_datetime
+    workday_sensor:
+      name: Workday Sensor
+      description: Binary Sensor for determining it it should run. Typically  from Workday Integratoin
+      selector:
+        entity:
+          filter:
+            - domain: binary_sensor
+    alarm_script:
+      name: Script to trigger
+      description: Script to trigger
+      selector:
+        entity:
+          filter:
+            - domain: script
+    target_light:
+      name: Lights
+      description: The light(s) with Mireds
+      selector:
+        entity:
+          filter:
+            - domain: light
+    light_timeout:
+      name: Timeout
+      description: Light will turn off after this time on last run
+      default: 10
+      selector:
+        number:
+          min: 1
+          max: 60
+    steps_per_minute:
+      name: Steps per minute for all runs
+      description: Used for configuring percentage of each step for brightness and color temperature
+      default: 12
+      selector:
+        number:
+          min: 1
+          max: 60
+
+    min_mireds_1:
+      description: Minimum mireds value (coldest) for 1st run
+      selector:
+        color_temp:
+      default: 375
+      name: Min Mireds 1
+    max_mireds_1:
+      description: >-
+        Maximum mireds value (warmest) for 1st run
+      selector:
+        color_temp:
+      default: 400
+      name: Max Mireds 1
+    max_brightness_1:
+      name: Maximum Brightness 1
+      selector:
+        number:
+          min: 1
+          max: 100
+      default: 10
+    alarm_length_1:
+      name: Alarm Length 1
+      description: >-
+        This is the start to finish time for the first run
+      selector:
+        number:
+          min: 1
+          max: 60
+      default: 10
+
+    min_mireds_2:
+      description: Minimum mireds value (coldest) for 1st run
+      selector:
+        color_temp:
+      default: 300
+      name: Min Mireds 1
+    max_mireds_2:
+      description: >-
+        Maximum mireds value (warmest) for 1st run
+      selector:
+        color_temp:
+      default: 400
+      name: Max Mireds 1
+    max_brightness_2:
+      name: Maximum Brightness 1
+      selector:
+        number:
+          min: 1
+          max: 100
+      default: 50
+    alarm_length_2:
+      name: Alarm length 2
+      description: >-
+        This is the start to finish time for the second run
+      selector:
+        number:
+          min: 1
+          max: 60
+      default: 10
+
+    min_mireds_3:
+      description: Minimum mireds value (coldest) for 1st run
+      selector:
+        color_temp:
+      default: 160
+      name: Min Mireds 1
+    max_mireds_3:
+      description: >-
+        Maximum mireds value (warmest) for 1st run
+      selector:
+        color_temp:
+      default: 400
+      name: Max Mireds 1
+    max_brightness_3:
+      name: Maximum Brightness 1
+      selector:
+        number:
+          min: 1
+          max: 100
+      default: 100
+    alarm_length_3:
+      name: Alarm Lenght 3
+      description: >-
+        This is the start to finish time for the third run
+      selector:
+        number:
+          min: 1
+          max: 60
+      default: 5
+
+trigger:
+  - platform: time
+    at: !input alarm_start_time
+
+condition:
+  - condition: state
+    entity_id: !input workday_sensor
+    state: "on"
+
+action:
+  - service: !input alarm_script
+    data:
+      min_mireds: !input min_mireds_1
+      max_mireds_selector: !input max_mireds_1
+      max_brightness_pct: !input max_brightness_1
+      alarm_length: !input alarm_length_1
+      steps_per_minute: !input steps_per_minute
+      light_timeout: 0
+      target_light: !input target_light
+  - if:
+      - condition: state
+        state: "on"
+        entity_id: !input target_light
+    then:
+      - service: !input alarm_script
+        data:
+          min_mireds: !input min_mireds_2
+          max_mireds_selector: !input max_mireds_2
+          max_brightness_pct: !input max_brightness_2
+          alarm_length: !input alarm_length_2
+          steps_per_minute: !input steps_per_minute
+          light_timeout: 0
+          target_light: !input target_light
+  - if:
+      - condition: state
+        state: "on"
+        entity_id: !input target_light
+    then:
+      - service: !input alarm_script
+        data:
+          min_mireds: !input min_mireds_3
+          max_mireds_selector: !input max_mireds_3
+          max_brightness_pct: !input max_brightness_3
+          alarm_length: !input alarm_length_3
+          steps_per_minute: !input steps_per_minute
+          light_timeout: !input light_timeout
+          target_light: !input target_light
+mode: parallel
+max: 10
