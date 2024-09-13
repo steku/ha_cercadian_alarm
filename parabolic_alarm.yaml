@@ -12,21 +12,21 @@ blueprint:
             - domain: input_datetime
     workday_sensor:
       name: Workday Sensor
-      description: Binary Sensor for determining it it should run. Typically  from Workday Integratoin
+      description: Binary Sensor for determining whether it should run. Typically from Workday Integration
       selector:
         entity:
           filter:
             - domain: binary_sensor
     alarm_script:
       name: Script to trigger
-      description: Script to trigger
+      description: Light Alarm Script
       selector:
         entity:
           filter:
             - domain: script
     target_light:
       name: Lights
-      description: The light(s) with Mireds
+      description: The light(s) with kelvin
       selector:
         entity:
           filter:
@@ -48,21 +48,24 @@ blueprint:
           min: 1
           max: 60
 
-    min_mireds_1:
-      description: Minimum mireds value (coldest) for 1st run
+    start_kelvin_temp:
+      description: Start Kelvin value (warm) for 1st run
       selector:
         color_temp:
-      default: 375
-      name: Min Mireds 1
-    max_mireds_1:
+          unit: kelvin
+      default: 2500
+      name: Starting Kelvin
+    target_kelvin_1:
       description: >-
-        Maximum mireds value (warmest) for 1st run
+        Target Kelvin value (cold) for the end of the first run
       selector:
         color_temp:
-      default: 400
-      name: Max Mireds 1
+          unit: kelvin
+      default: 3000
+      name: Target Kelvin 1
     max_brightness_1:
       name: Maximum Brightness 1
+      description: Finish value for first run
       selector:
         number:
           min: 1
@@ -78,21 +81,17 @@ blueprint:
           max: 60
       default: 10
 
-    min_mireds_2:
-      description: Minimum mireds value (coldest) for 1st run
-      selector:
-        color_temp:
-      default: 300
-      name: Min Mireds 1
-    max_mireds_2:
+    target_kelvin_2:
       description: >-
-        Maximum mireds value (warmest) for 1st run
+        Target Kelvin value (cold) for second run
       selector:
         color_temp:
-      default: 400
-      name: Max Mireds 1
+          unit: kelvin
+      default: 4000
+      name: Target Kelvin 2
     max_brightness_2:
       name: Maximum Brightness 1
+      description: Finish value for second run
       selector:
         number:
           min: 1
@@ -108,21 +107,17 @@ blueprint:
           max: 60
       default: 10
 
-    min_mireds_3:
-      description: Minimum mireds value (coldest) for 1st run
-      selector:
-        color_temp:
-      default: 160
-      name: Min Mireds 1
-    max_mireds_3:
+    target_kelvin_3:
       description: >-
-        Maximum mireds value (warmest) for 1st run
+        Target Kelvin value (cold) for third run
       selector:
         color_temp:
-      default: 400
-      name: Max Mireds 1
+          unit: kelvin
+      default: 6500
+      name: Target Kelvin 3
     max_brightness_3:
       name: Maximum Brightness 1
+      description: Finish value for third and final run
       selector:
         number:
           min: 1
@@ -148,24 +143,32 @@ condition:
     state: "on"
 
 action:
-  - service: !input alarm_script
+  - action: light.turn_on
     data:
-      min_mireds: !input min_mireds_1
-      max_mireds_selector: !input max_mireds_1
+      color_temp_kelvin: !input start_kelvin_temp
+      brightness_pct: 1
+      entity_id: !input target_light
+  - delay:
+      seconds: 5
+  - action: !input alarm_script
+    data:
+      target_kelvin: !input target_kelvin_1
+      start_kelvin: !input start_kelvin_temp
       max_brightness_pct: !input max_brightness_1
       alarm_length: !input alarm_length_1
       steps_per_minute: !input steps_per_minute
       light_timeout: 0
       target_light: !input target_light
+
   - if:
       - condition: state
         state: "on"
         entity_id: !input target_light
     then:
-      - service: !input alarm_script
+      - action: !input alarm_script
         data:
-          min_mireds: !input min_mireds_2
-          max_mireds_selector: !input max_mireds_2
+          target_kelvin: !input target_kelvin_2
+          start_kelvin: !input target_kelvin_1
           max_brightness_pct: !input max_brightness_2
           alarm_length: !input alarm_length_2
           steps_per_minute: !input steps_per_minute
@@ -176,10 +179,10 @@ action:
         state: "on"
         entity_id: !input target_light
     then:
-      - service: !input alarm_script
+      - action: !input alarm_script
         data:
-          min_mireds: !input min_mireds_3
-          max_mireds_selector: !input max_mireds_3
+          target_kelvin: !input target_kelvin_3
+          start_kelvin: !input target_kelvin_2
           max_brightness_pct: !input max_brightness_3
           alarm_length: !input alarm_length_3
           steps_per_minute: !input steps_per_minute
