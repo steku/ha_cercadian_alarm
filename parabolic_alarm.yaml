@@ -90,7 +90,7 @@ blueprint:
       default: 4000
       name: Target Kelvin 2
     max_brightness_2:
-      name: Maximum Brightness 1
+      name: Maximum Brightness 2
       description: Finish value for second run
       selector:
         number:
@@ -116,7 +116,7 @@ blueprint:
       default: 6500
       name: Target Kelvin 3
     max_brightness_3:
-      name: Maximum Brightness 1
+      name: Maximum Brightness 3
       description: Finish value for third and final run
       selector:
         number:
@@ -124,7 +124,7 @@ blueprint:
           max: 100
       default: 100
     alarm_length_3:
-      name: Alarm Lenght 3
+      name: Alarm Length 3
       description: >-
         This is the start to finish time for the third run
       selector:
