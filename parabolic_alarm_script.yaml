@@ -1,4 +1,87 @@
-alias: Lamp Wake Up
+blueprint:
+  name: Light Sunrise
+  author: steriku
+  description: >
+    Campanion Script to the parabolic alarm automation blueprint.
+  source_url: https://github.com/steku/ha_cercadian_alarm/blob/main/blueprint_parabolic_alarm_script.yaml
+  domain: script
+  homeassistant:
+    min_version: 2024.9.0
+fields:
+  target_kelvin:
+    description: Coldest Kelvin value. This is the end value - most white
+    selector:
+      color_temp:
+        unit: kelvin
+    default: 6500
+    name: Coldest Kelvin
+  start_kelvin:
+    description: >-
+      This is the start value. If the light is on the current value from the
+      state of the light will be used and this will be ignored.
+    selector:
+      color_temp:
+        unit: kelvin
+        min: 2500
+        max: 6500
+    default: 6500
+    name: Warmest Kelvin
+  max_brightness_pct:
+    description: Maximum brightness in percent to reach by the end of the script
+    selector:
+      number:
+        min: 1
+        max: 100
+    default: 80
+    name: Max brightness
+  alarm_length:
+    description: >-
+      This is the start to finish time. Take this into account when setting up
+      the automation this script is called by.
+    selector:
+      number:
+        min: 1
+        max: 60
+    default: 10
+    name: Alarm Length
+  steps_per_minute:
+    description: How many steps per minute
+    selector:
+      number:
+        min: 1
+        max: 12
+    default: 12
+    name: Steps Per minute
+  target_light:
+    description: A single light or group
+    selector:
+      entity:
+        filter:
+          domain: light
+    name: Target Light
+  light_timeout:
+    description: >-
+      Minutes to delay after Max Brightness has been reached to turn the light
+      back off. Value of 0 disables the timeout
+    selector:
+      number:
+        min: 0
+        max: 60
+    default: 5
+    name: Light Timeout
+variables:
+  steps: "{{ alarm_length * steps_per_minute }}"
+  min_brightness: |-
+    {% if states(target_light) == 'off' %}
+      3
+    {% else %}
+      {{ state_attr(target_light, 'brightness') }}
+    {% endif %}
+  max_brightness: "{{ max_brightness_pct * 2.55 }}"
+  kelvin_step: "{{ (target_kelvin - start_kelvin) / steps }}"
+  bright_step: "{{ (max_brightness - min_brightness) / steps }}"
+  start_time: "{{ as_timestamp(now()) }}"
+  individual_step: "{{ 60 / steps_per_minute }}"
 sequence:
   - repeat:
       until:
@@ -52,94 +135,4 @@ sequence:
         target:
           entity_id: "{{ target_light }}"
         action: light.turn_off
-description: Turn on lamps brighter based on wake time
-fields:
-  target_kelvin:
-    description: Coldest Kelvin value. This is the end value - most white
-    selector:
-      color_temp:
-        unit: kelvin
-    required: true
-    default: 6500
-    name: Coldest Kelvin
-    example: 6500
-  start_kelvin:
-    description: >-
-      This is the start value. If the light is on the current value from the
-      state of the light will be used and this will be ignored.
-    example: 2500
-    selector:
-      color_temp:
-        unit: kelvin
-        min: 2500
-        max: 6500
-    default: 6500
-    required: true
-    name: Warmest Kelvin
-  max_brightness_pct:
-    description: Maximum brightness in percent to reach by the end of the script
-    example: 80
-    selector:
-      number:
-        min: 1
-        max: 100
-    default: 80
-    required: true
-    name: Max brightness
-  alarm_length:
-    description: >-
-      This is the start to finish time. Take this into account when setting up
-      the automation this script is called by.
-    example: 10
-    selector:
-      number:
-        min: 1
-        max: 60
-    default: 10
-    required: true
-    name: Alarm Length
-  steps_per_minute:
-    description: How many steps per minute
-    example: 4
-    selector:
-      number:
-        min: 1
-        max: 12
-    default: 12
-    name: Steps Per minute
-    required: true
-  target_light:
-    description: A single light or group
-    example: light.master_lamp
-    selector:
-      entity:
-        filter:
-          domain: light
-    name: Target Light
-    required: true
-  light_timeout:
-    description: >-
-      Minutes to delay after Max Brightness has been reached to turn the light
-      back off. Value of 0 disables the timeout
-    example: 5
-    selector:
-      number:
-        min: 0
-        max: 60
-    default: 5
-    name: Light Timeout
-    required: true
-variables:
-  steps: "{{ alarm_length * steps_per_minute }}"
-  min_brightness: |-
-    {% if states(target_light) == 'off' %}
-      3
-    {% else %}
-      {{ state_attr(target_light, 'brightness') }}
-    {% endif %}
-  max_brightness: "{{ max_brightness_pct * 2.55 }}"
-  kelvin_step: "{{ (target_kelvin - start_kelvin) / steps }}"
-  bright_step: "{{ (max_brightness - min_brightness) / steps }}"
-  start_time: "{{ as_timestamp(now()) }}"
-  individual_step: "{{ 60 / steps_per_minute }}"
 mode: parallel

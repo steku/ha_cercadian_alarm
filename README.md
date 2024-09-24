@@ -6,8 +6,8 @@ I created my own script and automation to bypass the frustations above. It is no
 
 The second component is an blueprint that executes the script 3 times in series with different values for each execution. 
 
-## Detailed Explaination of Script
-The script expects to be kicked off with parameters defined. For the script to work, the target light needs to be and set to starting Kelvin values. The starting brightnes is always 1%. The blueprint handles the inital turning on of the light. The kelvin value of the light will be used as the starting value.
+## Detailed Explaination of Script Blueprint
+The script expects to be kicked off with parameters defined. For the script to work, the target light needs to be and set to starting Kelvin values. The starting brightnes is always 1%. The automation blueprint handles the inital turning on of the light. The kelvin value of the light will be used as the starting value.
 
 If you turn off the light at any point while the script is running, the script and blueprint will end.
 
