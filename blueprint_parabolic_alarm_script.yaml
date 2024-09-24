@@ -91,19 +91,18 @@ variables:
   bright_step: "{{ (max_brightness - min_brightness) / steps }}"
   start_time: "{{ as_timestamp(now()) }}"
   individual_step: "{{ 60 / steps_per_minute }}"
-mode: parallel
 sequence:
   - repeat:
       until:
         - condition: or
           conditions:
             - condition: template
-              value_template: "{{ is_state(!input 'target_light', 'off') }}"
+              value_template: "{{ is_state(target_light, 'off') }}"
             - condition: template
-              value_template: "{{ state_attr(!input 'target_light', 'brightness') >= max_brightness }}"
+              value_template: "{{ state_attr(target_light, 'brightness') >= max_brightness }}"
             - condition: template
               value_template: >-
-                {{ state_attr(!input 'target_light', 'color_temp_kelvin') >=
+                {{ state_attr(target_light, 'color_temp_kelvin') >=
                 target_kelvin }}
             - condition: template
               value_template: >-
@@ -117,31 +116,32 @@ sequence:
             brightness: >-
               {{ min_brightness + (bright_step * steps_to_now) | round(0,
               'ceil') }}
-            kelvin: "{{ !input 'start_kelvin' + (kelvin_step * steps_to_now) }}"
+            kelvin: "{{ start_kelvin + (kelvin_step * steps_to_now) }}"
         - delay:
             seconds: "{{ individual_step }}"
         - if:
             - condition: template
-              value_template: "{{ is_state(!input 'target_light', 'on') }}"
+              value_template: "{{ is_state(target_light, 'on') }}"
           then:
             - data:
                 brightness: "{{ brightness }}"
                 color_temp_kelvin: "{{ kelvin }}"
                 transition: "{{ individual_step - 1 }}"
               target:
-                entity_id: "{{ !input  'target_light' }}"
+                entity_id: "{{ target_light }}"
               action: light.turn_on
   - if:
       - condition: and
         conditions:
           - condition: template
-            value_template: "{{ !input 'light_timeout' != 0 }}"
+            value_template: "{{ light_timeout != 0 }}"
           - condition: template
-            value_template: "{{ is_state(!input 'target_light', 'on') }}"
+            value_template: "{{ is_state(target_light, 'on') }}"
     then:
       - delay:
-          minutes: "{{ !input 'light_timeout' }}"
+          minutes: "{{ light_timeout }}"
       - data: {}
         target:
-          entity_id: "{{ !input 'target_light' }}"
+          entity_id: "{{ target_light }}"
         action: light.turn_off
+mode: parallel
