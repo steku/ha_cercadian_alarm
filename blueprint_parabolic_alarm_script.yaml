@@ -71,18 +71,26 @@ blueprint:
       default: 5
       name: Light Timeout
 variables:
-  steps: !input 'alarm_length' * !input 'steps_per_minute'
+  alarm_length: !input alarm_length
+  steps_per_minute: !input steps_per_minute
+  target_light: !input target_light
+  max_brightness_pct: !input max_brightness_pct
+  target_kelvin: !input target_kelvin
+  start_kelvin: !input start_kelvin
+  light_timeout: !input light_timeout
+
+  steps: "{{ alarm_length * steps_per_minute }}"
   min_brightness: |-
-    {% if states(!input 'target_light') == 'off' %}
+    {% if states(target_light) == 'off' %}
       3
     {% else %}
-      {{ state_attr(!input 'target_light', 'brightness') }}
+      {{ state_attr(target_light, 'brightness') }}
     {% endif %}
-  max_brightness: !input 'max_brightness_pct' * 2.55
-  kelvin_step: (!input 'target_kelvin' - !input 'start_kelvin') / steps
-  bright_step: (!input 'max_brightness' - !input 'min_brightness') / steps
+  max_brightness: "{{ max_brightness_pct * 2.55 }}"
+  kelvin_step: "{{ (target_kelvin - start_kelvin) / steps }}"
+  bright_step: "{{ (max_brightness - min_brightness) / steps }}"
   start_time: "{{ as_timestamp(now()) }}"
-  individual_step: 60 / !input 'steps_per_minute'
+  individual_step: "{{ 60 / steps_per_minute }}"
 mode: parallel
 sequence:
   - repeat:
