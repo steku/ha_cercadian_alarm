@@ -2,7 +2,7 @@ I wanted to try the sunrise effect for waking up in the morning and found the [b
 
 I created my own script and automation to bypass the frustations above. It is not nearly as full featured as the blueprint but it is highly configureable. Basically it contains 2 components. The first component is a script that can be executed many times in series to change the rates of the 2 main settings, color temperature in kelvin and brightness. By running it many times in series you get get a more parabolic effect. I added this feature because I could visually detect changes in brightness more at lower values. Below is an example of this. You can see the points of which the values change. 
 
-![image|690x196](upload://MHf7C5rNaVUQZPrWWkcCHY68Um.png)
+![image|690x196](images/demo.png)
 
 The second component is an blueprint that executes the script 3 times in series with different values for each execution. 
 
