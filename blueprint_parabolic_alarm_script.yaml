@@ -8,7 +8,7 @@ blueprint:
   domain: script
   homeassistant:
     min_version: 2024.9.0
-  input:
+fields:
     target_kelvin:
       description: Coldest Kelvin value. This is the end value - most white
       selector:
