@@ -9,8 +9,6 @@ The second component is an blueprint that executes the script 3 times in series 
 ## Detailed Explaination of Script
 The script expects to be kicked off with parameters defined. For the script to work, the target light needs to be and set to starting Kelvin values. The starting brightnes is always 1%. The blueprint handles the inital turning on of the light. The kelvin value of the light will be used as the starting value.
 
-![image|690x456](upload://7bOOnbkscen4a6DBca9HNMoflN3.png)
-
 If you turn off the light at any point while the script is running, the script and blueprint will end.
 
 The script also allows for defining how long to take to get from start to finish values and how many steps per minute to take to get there. The script will also turn off the light after the 'Light Timeout' period. Setting this value to 0 will disable the timeout, and this is how you can chain executions of the script together to get the desired parabolic curve effect.
