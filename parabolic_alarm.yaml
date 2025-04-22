@@ -3,6 +3,12 @@ blueprint:
   description: Turn a light on based on a start time, whether it is a workday and whether a person is home. This is to match the sunrise and allow for a natural wake up.
   domain: automation
   input:
+    pre_action:
+      name: 🎮 Pre Script Action
+      description: An action you want to perform before the lights turn on.
+      default: []
+      selector:
+        action: {}
     alarm_start_time:
       name: 🕒 Start Time
       description:
@@ -18,8 +24,7 @@ blueprint:
           multiple: false
     offset_from_start_time:
       name: 🏁 Offset From Start Time
-      description:
-        Adjust the amount of time before or after the set Start Time value to start the transition. Enter seconds or HH:MM:SS format (e.g. "-00:05:00" to start 5 minutes before the Start Time. Useful if the start time comes from an alarm entity and you want to adjust where in the brightness cycle you are when the alarm goes off. See https://www.home-assistant.io/docs/automation/trigger/#sensors-of-datetime-device-class-with-offsets for caution about using positive offsets.
+      description: Adjust the amount of time before or after the set Start Time value to start the transition. Enter seconds or HH:MM:SS format (e.g. "-00:05:00" to start 5 minutes before the Start Time. Useful if the start time comes from an alarm entity and you want to adjust where in the brightness cycle you are when the alarm goes off. See https://www.home-assistant.io/docs/automation/trigger/#sensors-of-datetime-device-class-with-offsets for caution about using positive offsets.
       default: "-00:00:00"
       selector:
         text:
@@ -81,6 +86,15 @@ blueprint:
         number:
           min: 1.0
           max: 60.0
+          step: 1.0
+          mode: slider
+    start_brightness:
+      name: ⭐️ Start Brightness
+      description: Starting value for brightness
+      selector:
+        number:
+          min: 1.0
+          max: 100.0
           step: 1.0
           mode: slider
     start_kelvin_temp:
@@ -171,6 +185,12 @@ blueprint:
           step: 1.0
           mode: slider
       default: 5
+    post_action:
+      name: 🎮 Post Script Action
+      description: An action you want to run after the script has finished
+      default: []
+      selector:
+        action: {}
   source_url: https://github.com/steku/ha_cercadian_alarm/blob/main/parabolic_alarm.yaml
 trigger:
   - trigger: time
@@ -188,7 +208,7 @@ action:
   - action: light.turn_on
     data:
       color_temp_kelvin: !input start_kelvin_temp
-      brightness_pct: 1
+      brightness_pct: !input start_brightness
       entity_id: !input target_light
   - delay:
       seconds: 5
