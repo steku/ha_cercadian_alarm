@@ -206,6 +206,9 @@ condition:
     entity_id: !input person_sensor
     state: "home"
 action:
+  - choose:
+      - conditions: []
+        sequence: !input pre_action
   - action: light.turn_on
     data:
       color_temp_kelvin: !input start_kelvin_temp
@@ -250,4 +253,7 @@ action:
           steps_per_minute: !input steps_per_minute
           light_timeout: !input light_timeout
           target_light: !input target_light
+  - choose:
+      - conditions: []
+        sequence: !input post_action
 mode: single
