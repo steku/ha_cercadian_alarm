@@ -97,6 +97,7 @@ blueprint:
           max: 100.0
           step: 1.0
           mode: slider
+      default: 1.0
     start_kelvin_temp:
       description: Start Kelvin value (warm) for 1st run
       selector:
