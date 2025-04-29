@@ -202,9 +202,11 @@ condition:
   - condition: state
     entity_id: !input workday_sensor
     state: "on"
-  - condition: state
-    entity_id: !input person_sensor
-    state: "home"
+  - condition: not
+    conditions:
+      - condition: state
+        entity_id: !input person_sensor
+        state: "not_home"
 action:
   - choose:
       - conditions: []
