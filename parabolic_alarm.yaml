@@ -199,12 +199,16 @@ trigger:
       entity_id: !input alarm_start_time
       offset: !input offset_from_start_time
 condition:
-  - condition: state
-    entity_id: !input workday_sensor
-    state: "on"
-  - condition: state
-    entity_id: !input person_sensor
-    state: "home"
+  - condition: or
+    conditions:
+      - condition: state
+        entity_id: !input workday_sensor
+        state: "on"
+  - condition: or
+    conditions: 
+      - condition: state
+        entity_id: !input person_sensor
+        state: "home"
 action:
   - choose:
       - conditions: []
