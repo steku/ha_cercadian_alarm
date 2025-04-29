@@ -38,7 +38,7 @@ blueprint:
           filter:
             - domain:
                 - binary_sensor
-          multiple: true
+          multiple: false
     person_sensor:
       name: 👤 Person Sensor
       description: Select the person sensor so that the alarm will only run when you are home.
@@ -47,7 +47,7 @@ blueprint:
           filter:
             - domain:
                 - person
-          multiple: true
+          multiple: false
     alarm_script:
       name: 📄 Script to trigger
       description: Light Alarm Script
