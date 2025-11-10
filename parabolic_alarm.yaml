@@ -44,12 +44,12 @@ blueprint:
                 - script
           multiple: false
     target_light:
-      name: 💡 Lights
-      description: The light(s) with kelvin
+      description: A single light or group
       selector:
-        target:
-          entity:
+        entity:
+          filter:
             domain: light
+      name: Target Light
     light_timeout:
       name: ⏱️ Timeout
       description: Light will turn off after this time on last run. Setting this to 0 will leave the light on.
@@ -206,8 +206,9 @@ action:
       light_timeout: 0
       target_light: !input target_light
   - if:
-      - condition: template
-        value_template: "{{ expand(lights.entity_id) | selectattr('state', '==', 'on')
+      - condition: state
+        state: "on"
+        entity_id: !input target_light
     then:
       - action: !input alarm_script
         data:
