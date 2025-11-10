@@ -43,9 +43,7 @@ blueprint:
       selector:
         target:
           entity:
-            filter:
-              - domain:
-                  - light
+            domain: light
             multiple: false
     light_timeout:
       name: ⏱️ Timeout
