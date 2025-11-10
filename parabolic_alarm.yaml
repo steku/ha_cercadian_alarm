@@ -11,7 +11,7 @@ blueprint:
         action: {}
     conditions:
       name: Conditions
-      description: Set your own conditions for this automation. All conditions must pass unles you add your own OR block
+      description: Set your own conditions for this automation. All conditions must pass unless you add your own OR block
       default: []
       selector:
         condition:
@@ -46,8 +46,8 @@ blueprint:
     target_light:
       description: A single light or group
       selector:
-        entity:
-          filter:
+        target:
+          entity:
             domain: light
       name: Target Light
     light_timeout:
@@ -220,9 +220,8 @@ action:
           light_timeout: 0
           target_light: !input target_light
   - if:
-      - condition: state
-        state: "on"
-        entity_id: !input target_light
+      - condition: template
+        value_template: "{{ expand(target_light.entity_id) | selectattr('state', '==', 'on') | list | count > 0 }}"
     then:
       - action: !input alarm_script
         data:
