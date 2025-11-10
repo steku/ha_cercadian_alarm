@@ -2,6 +2,7 @@ blueprint:
   name: Parabolic Alarm Automation
   description: Turn a light on based on a start time, whether it is a workday and whether a person is home. This is to match the sunrise and allow for a natural wake up.
   domain: automation
+  condition:
   input:
     pre_action:
       name: 🎮 Pre Script Action
@@ -28,26 +29,6 @@ blueprint:
       default: "-00:00:00"
       selector:
         text:
-    workday_sensor:
-      name: 📆 Workday Sensor
-      description:
-        Binary Sensor that is used to determine whether it should run. Typically
-        from Workday Integration. More information here - https://www.home-assistant.io/integrations/workday/
-      selector:
-        entity:
-          filter:
-            - domain:
-                - binary_sensor
-          multiple: false
-    person_sensor:
-      name: 👤 Person Sensor
-      description: Select the person sensor so that the alarm will only run when you are home.
-      selector:
-        entity:
-          filter:
-            - domain:
-                - person
-          multiple: false
     alarm_script:
       name: 📄 Script to trigger
       description: Light Alarm Script
@@ -61,11 +42,12 @@ blueprint:
       name: 💡 Lights
       description: The light(s) with kelvin
       selector:
-        entity:
-          filter:
-            - domain:
-                - light
-          multiple: false
+        target:
+          entity:
+            filter:
+              - domain:
+                  - light
+            multiple: false
     light_timeout:
       name: ⏱️ Timeout
       description: Light will turn off after this time on last run. Setting this to 0 will leave the light on.

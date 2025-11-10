@@ -112,7 +112,7 @@ sequence:
             seconds: "{{ individual_step }}"
         - if:
             - condition: template
-              value_template: "{{ is_state(target_light, 'on') }}"
+              value_template: "{{ not is_state(target_light, 'off') }}"
           then:
             - data:
                 brightness: "{{ brightness }}"
@@ -126,7 +126,7 @@ sequence:
           - condition: template
             value_template: "{{ light_timeout != 0 }}"
           - condition: template
-            value_template: "{{ is_state(target_light, 'on') }}"
+            value_template: "{{ not is_state(target_light, 'off') }}"
     then:
       - delay:
           minutes: "{{ light_timeout }}"
