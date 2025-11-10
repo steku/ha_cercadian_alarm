@@ -10,7 +10,8 @@ blueprint:
       selector:
         action: {}
     conditions:
-      name: conditions
+      name: Conditions
+      description: Set your own conditions for this automations
       default: []
       selector:
         condition: {}
