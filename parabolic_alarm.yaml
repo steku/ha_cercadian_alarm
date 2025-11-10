@@ -208,7 +208,7 @@ action:
   - if:
       - condition: state
         state: "on"
-        target: !input target_light
+        entity_id: !input target_light
     then:
       - action: !input alarm_script
         data:
