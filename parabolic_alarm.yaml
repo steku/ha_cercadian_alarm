@@ -206,9 +206,8 @@ action:
       light_timeout: 0
       target_light: !input target_light
   - if:
-      - condition: state
-        state: "on"
-        entity_id: !input target_light
+      - condition: template
+        value_template: "{{ expand(lights.entity_id) | selectattr('state', '==', 'on')
     then:
       - action: !input alarm_script
         data:
