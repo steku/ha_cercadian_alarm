@@ -11,7 +11,7 @@ blueprint:
         action: {}
     conditions:
       name: Conditions
-      description: Set your own conditions for this automations. All conditions must pass.
+      description: Set your own conditions for this automation. All conditions must pass unles you add your own OR block
       default: []
       selector:
         condition:
