@@ -14,7 +14,7 @@ blueprint:
       description: Set your own conditions for this automations. All conditions must pass.
       default: []
       selector:
-        condition: {}
+        condition:
     alarm_start_time:
       name: 🕒 Start Time
       description:
